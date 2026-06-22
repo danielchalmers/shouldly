@@ -1,0 +1,5 @@
+value
+    should be null
+"the-expected-null-sentinel"
+    but was
+CustomBox(42)

@@ -5,7 +5,7 @@ class ShouldBeNullMessageGenerator : ShouldlyMessageGenerator
     private static readonly Regex Validator = new("Should(Not)?BeNull");
 
     public override bool CanProcess(IShouldlyAssertionContext context) =>
-        Validator.IsMatch(context.ShouldMethod);
+        Validator.IsMatch(context.ShouldMethod) && !context.HasRelevantActual;
 
     public override string GenerateErrorMessage(IShouldlyAssertionContext context)
     {
