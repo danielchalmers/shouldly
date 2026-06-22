@@ -1,0 +1,9 @@
+StringDictionary()
+    should contain key
+"Missing"
+    with value
+"Bar"
+    but the key does not exist
+
+Additional Info:
+    Some additional context

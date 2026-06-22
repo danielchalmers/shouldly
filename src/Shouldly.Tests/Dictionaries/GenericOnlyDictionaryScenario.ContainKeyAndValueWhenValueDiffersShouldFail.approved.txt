@@ -1,0 +1,10 @@
+StringDictionary()
+    should contain key
+"Foo"
+    with value
+"WrongValue"
+    but value was
+"Bar"
+
+Additional Info:
+    Some additional context
