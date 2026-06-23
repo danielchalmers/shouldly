@@ -408,6 +408,7 @@ public abstract class ShouldlyMessage
         new ShouldBeNegativeMessageGenerator(),
         new ShouldBeTypeMessageGenerator(),
         new ShouldBeInOrderMessageGenerator(),
+        new ShouldHaveCountMessageGenerator(),
         new ShouldBeEquivalentToMessageGenerator()
     ];
 
