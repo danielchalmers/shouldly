@@ -1,19 +1,17 @@
-using System.ComponentModel;
-
 namespace Shouldly;
 
 /// <summary>
-/// Order-independent variant of <see cref="ObjectGraphTestExtensions.ShouldBeEquivalentTo(object, object, string, string)"/>.
-/// Shouldly's default ShouldBeEquivalentTo compares enumerables strictly by index; FluentAssertions'
-/// BeEquivalentTo is order-INDEPENDENT for collections by default. This overload restores that behaviour:
-/// when ignoreOrder is true the top-level collections are matched as multisets, each actual element
-/// paired with a distinct structurally-equivalent expected element.
+/// Order-independent variant of ShouldBeEquivalentTo. Shouldly's default compares enumerables strictly by
+/// index; FluentAssertions' BeEquivalentTo is order-INDEPENDENT for collections by default. With
+/// <see cref="EquivalencyOptions.IgnoreOrder"/> the top-level collections are matched as multisets: each
+/// actual element is paired with a distinct structurally-equivalent expected element (a maximum bipartite
+/// matching, so duplicates and ambiguous equivalences are handled correctly).
 /// </summary>
 public static partial class ObjectGraphTestExtensions
 {
     /// <summary>
-    /// Asserts that an object is equivalent to another by deep member comparison, optionally ignoring
-    /// the order of elements in the top-level collection.
+    /// Asserts that an object is equivalent to another by deep member comparison, ignoring the order of
+    /// elements in the top-level collection. Convenience for <c>ShouldBeEquivalentTo(expected, new EquivalencyOptions { IgnoreOrder = ignoreOrder })</c>.
     /// </summary>
     [RequiresUnreferencedCode("Walks the actual/expected object graph using reflection.")]
     public static void ShouldBeEquivalentTo(
@@ -21,9 +19,21 @@ public static partial class ObjectGraphTestExtensions
         [NotNullIfNotNull(nameof(actual))] object? expected,
         bool ignoreOrder,
         string? customMessage = null,
+        [CallerArgumentExpression(nameof(actual))] string? actualExpression = null) =>
+        actual.ShouldBeEquivalentTo(expected, new EquivalencyOptions { IgnoreOrder = ignoreOrder }, customMessage, actualExpression);
+
+    /// <summary>
+    /// Asserts that an object is equivalent to another by deep member comparison, honouring the supplied options.
+    /// </summary>
+    [RequiresUnreferencedCode("Walks the actual/expected object graph using reflection.")]
+    public static void ShouldBeEquivalentTo(
+        [NotNullIfNotNull(nameof(expected))] this object? actual,
+        [NotNullIfNotNull(nameof(actual))] object? expected,
+        EquivalencyOptions options,
+        string? customMessage = null,
         [CallerArgumentExpression(nameof(actual))] string? actualExpression = null)
     {
-        if (!ignoreOrder)
+        if (!options.IgnoreOrder)
         {
             actual.ShouldBeEquivalentTo(expected, customMessage, actualExpression);
             return;
@@ -35,34 +45,10 @@ public static partial class ObjectGraphTestExtensions
             var actualList = actualEnumerable.Cast<object?>().ToList();
             var expectedList = expectedEnumerable.Cast<object?>().ToList();
 
-            if (actualList.Count != expectedList.Count)
+            if (actualList.Count != expectedList.Count || !HasPerfectMatching(actualList, expectedList))
             {
                 throw new ShouldAssertException(
-                    new ExpectedActualShouldlyMessage($"equivalent collection of {expectedList.Count} item(s) (ignoring order)", actual, customMessage, actualExpression: actualExpression).ToString());
-            }
-
-            var matched = new bool[expectedList.Count];
-            foreach (var actualItem in actualList)
-            {
-                var found = false;
-                for (var j = 0; j < expectedList.Count; j++)
-                {
-                    if (matched[j])
-                        continue;
-
-                    if (AreEquivalent(actualItem, expectedList[j]))
-                    {
-                        matched[j] = true;
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (!found)
-                {
-                    throw new ShouldAssertException(
-                        new ExpectedActualShouldlyMessage("an equivalent element (ignoring order)", actualItem, customMessage, actualExpression: actualExpression).ToString());
-                }
+                    new ExpectedActualShouldlyMessage(expectedList, actualList, customMessage, actualExpression: actualExpression).ToString());
             }
 
             return;
@@ -72,12 +58,67 @@ public static partial class ObjectGraphTestExtensions
         actual.ShouldBeEquivalentTo(expected, customMessage, actualExpression);
     }
 
+    // Each actual element must pair with a distinct equivalent expected element. Because the two lists are
+    // the same length, a perfect matching exists iff they are equivalent as multisets. Solved with Kuhn's
+    // augmenting-path algorithm (O(V*E)); collection sizes in tests are small.
+    [RequiresUnreferencedCode("Walks the actual/expected object graph using reflection.")]
+    private static bool HasPerfectMatching(List<object?> actualList, List<object?> expectedList)
+    {
+        var n = actualList.Count;
+        var candidates = new List<int>[n];
+        for (var i = 0; i < n; i++)
+        {
+            candidates[i] = [];
+            for (var j = 0; j < n; j++)
+            {
+                if (AreEquivalent(actualList[i], expectedList[j]))
+                    candidates[i].Add(j);
+            }
+        }
+
+        var expectedMatchedToActual = new int[n];
+        for (var k = 0; k < n; k++)
+            expectedMatchedToActual[k] = -1;
+
+        var matched = 0;
+        for (var i = 0; i < n; i++)
+        {
+            var seen = new bool[n];
+            if (TryAssign(i, candidates, expectedMatchedToActual, seen))
+                matched++;
+        }
+
+        return matched == n;
+    }
+
+    private static bool TryAssign(int actualIndex, List<int>[] candidates, int[] expectedMatchedToActual, bool[] seen)
+    {
+        foreach (var expectedIndex in candidates[actualIndex])
+        {
+            if (seen[expectedIndex])
+                continue;
+            seen[expectedIndex] = true;
+
+            if (expectedMatchedToActual[expectedIndex] == -1 ||
+                TryAssign(expectedMatchedToActual[expectedIndex], candidates, expectedMatchedToActual, seen))
+            {
+                expectedMatchedToActual[expectedIndex] = actualIndex;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     [RequiresUnreferencedCode("Walks the actual/expected object graph using reflection.")]
     private static bool AreEquivalent(object? actual, object? expected)
     {
         try
         {
-            CompareObjects(actual, expected, new List<string>(), new Dictionary<object, IList<object?>>(), null);
+            // We only use the deep compare as a boolean probe; its message is never surfaced, so opt into
+            // the stack-walk fallback rather than tripping the CallerArgumentExpression guard.
+            using (ShouldlyConfiguration.AllowStackWalking())
+                CompareObjects(actual, expected, new List<string>(), new Dictionary<object, IList<object?>>(), null);
             return true;
         }
         catch (ShouldAssertException)
