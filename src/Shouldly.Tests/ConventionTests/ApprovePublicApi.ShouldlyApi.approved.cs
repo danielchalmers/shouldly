@@ -392,6 +392,16 @@ namespace Shouldly
     {
         public ShouldCompleteInException(string? message, Shouldly.ShouldlyTimeoutException? inner) { }
     }
+    [Shouldly.ShouldlyMethods]
+    public static class ShouldContainInOrderExtensions
+    {
+        public static void ShouldContainInConsecutiveOrder<T>(this System.Collections.Generic.IEnumerable<T> actual, params T[] expected) { }
+        public static void ShouldContainInConsecutiveOrder<T>(this System.Collections.Generic.IEnumerable<T> actual, System.Collections.Generic.IEnumerable<T> expected, string? customMessage = null, [System.Runtime.CompilerServices.CallerArgumentExpression("actual")] string? actualExpression = null) { }
+        public static void ShouldContainInConsecutiveOrder<T>(this System.Collections.Generic.IEnumerable<T> actual, System.Collections.Generic.IEnumerable<T> expected, System.Collections.Generic.IEqualityComparer<T> comparer, string? customMessage = null, [System.Runtime.CompilerServices.CallerArgumentExpression("actual")] string? actualExpression = null) { }
+        public static void ShouldContainInOrder<T>(this System.Collections.Generic.IEnumerable<T> actual, params T[] expected) { }
+        public static void ShouldContainInOrder<T>(this System.Collections.Generic.IEnumerable<T> actual, System.Collections.Generic.IEnumerable<T> expected, string? customMessage = null, [System.Runtime.CompilerServices.CallerArgumentExpression("actual")] string? actualExpression = null) { }
+        public static void ShouldContainInOrder<T>(this System.Collections.Generic.IEnumerable<T> actual, System.Collections.Generic.IEnumerable<T> expected, System.Collections.Generic.IEqualityComparer<T> comparer, string? customMessage = null, [System.Runtime.CompilerServices.CallerArgumentExpression("actual")] string? actualExpression = null) { }
+    }
     public class ShouldContainWithCountShouldlyMessage : Shouldly.ShouldlyMessage
     {
         public ShouldContainWithCountShouldlyMessage(object? expected, object? actual, int matchCount, string? customMessage, [System.Runtime.CompilerServices.CallerMemberName] string shouldlyMethod = null, string? actualExpression = null) { }

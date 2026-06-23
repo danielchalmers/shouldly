@@ -4,8 +4,9 @@ namespace Shouldly;
 
 /// <summary>
 /// Extension methods asserting that an enumerable contains a set of values in a given order.
-/// Mirrors FluentAssertions' ContainInOrder (relative order, gaps allowed) and
-/// ContainInConsecutiveOrder (contiguous subsequence).
+/// <see cref="ShouldContainInOrder{T}(IEnumerable{T}, T[])"/> requires the expected values to appear in the
+/// same relative order (gaps allowed); <see cref="ShouldContainInConsecutiveOrder{T}(IEnumerable{T}, T[])"/>
+/// requires them to appear as a contiguous run.
 /// </summary>
 [DebuggerStepThrough]
 [ShouldlyMethods]
@@ -16,18 +17,56 @@ public static partial class ShouldContainInOrderExtensions
     /// Asserts that the enumerable contains all of the expected values in the given relative order.
     /// The matched values need not be adjacent, but each must appear after the previous one.
     /// </summary>
-    public static void ShouldContainInOrder<T>(this IEnumerable<T> actual, params T[] expected) =>
-        actual.ShouldContainInOrder((IEnumerable<T>)expected, null);
+    public static void ShouldContainInOrder<T>(this IEnumerable<T> actual, params T[] expected)
+    {
+        // params arrays cannot carry a [CallerArgumentExpression]; opt into the stack-walk fallback for the message.
+        using (ShouldlyConfiguration.AllowStackWalking())
+            ContainsInOrder(actual, expected, EqualityComparer<T>.Default, null, null);
+    }
 
     /// <summary>
     /// Asserts that the enumerable contains all of the expected values in the given relative order.
     /// </summary>
     public static void ShouldContainInOrder<T>(this IEnumerable<T> actual, IEnumerable<T> expected, string? customMessage = null,
-        [CallerArgumentExpression(nameof(actual))] string? actualExpression = null)
+        [CallerArgumentExpression(nameof(actual))] string? actualExpression = null) =>
+        ContainsInOrder(actual, expected, EqualityComparer<T>.Default, customMessage, actualExpression);
+
+    /// <summary>
+    /// Asserts that the enumerable contains all of the expected values in the given relative order, using the specified comparer.
+    /// </summary>
+    public static void ShouldContainInOrder<T>(this IEnumerable<T> actual, IEnumerable<T> expected, IEqualityComparer<T> comparer, string? customMessage = null,
+        [CallerArgumentExpression(nameof(actual))] string? actualExpression = null) =>
+        ContainsInOrder(actual, expected, comparer, customMessage, actualExpression);
+
+    /// <summary>
+    /// Asserts that the enumerable contains all of the expected values as a contiguous subsequence, in order.
+    /// </summary>
+    public static void ShouldContainInConsecutiveOrder<T>(this IEnumerable<T> actual, params T[] expected)
+    {
+        // params arrays cannot carry a [CallerArgumentExpression]; opt into the stack-walk fallback for the message.
+        using (ShouldlyConfiguration.AllowStackWalking())
+            ContainsInConsecutiveOrder(actual, expected, EqualityComparer<T>.Default, null, null);
+    }
+
+    /// <summary>
+    /// Asserts that the enumerable contains all of the expected values as a contiguous subsequence, in order.
+    /// </summary>
+    public static void ShouldContainInConsecutiveOrder<T>(this IEnumerable<T> actual, IEnumerable<T> expected, string? customMessage = null,
+        [CallerArgumentExpression(nameof(actual))] string? actualExpression = null) =>
+        ContainsInConsecutiveOrder(actual, expected, EqualityComparer<T>.Default, customMessage, actualExpression);
+
+    /// <summary>
+    /// Asserts that the enumerable contains all of the expected values as a contiguous subsequence, using the specified comparer.
+    /// </summary>
+    public static void ShouldContainInConsecutiveOrder<T>(this IEnumerable<T> actual, IEnumerable<T> expected, IEqualityComparer<T> comparer, string? customMessage = null,
+        [CallerArgumentExpression(nameof(actual))] string? actualExpression = null) =>
+        ContainsInConsecutiveOrder(actual, expected, comparer, customMessage, actualExpression);
+
+    private static void ContainsInOrder<T>(IEnumerable<T> actual, IEnumerable<T> expected, IEqualityComparer<T> comparer,
+        string? customMessage, string? actualExpression, [CallerMemberName] string shouldlyMethod = null!)
     {
         var actualList = actual.ToList();
         var expectedList = expected.ToList();
-        var comparer = EqualityComparer<T>.Default;
 
         var searchIndex = 0;
         foreach (var item in expectedList)
@@ -35,8 +74,7 @@ public static partial class ShouldContainInOrderExtensions
             var found = false;
             while (searchIndex < actualList.Count)
             {
-                var current = actualList[searchIndex++];
-                if (comparer.Equals(current, item))
+                if (comparer.Equals(actualList[searchIndex++], item))
                 {
                     found = true;
                     break;
@@ -44,28 +82,18 @@ public static partial class ShouldContainInOrderExtensions
             }
 
             if (!found)
-                throw new ShouldAssertException(new ExpectedActualShouldlyMessage(expectedList, actualList, customMessage, actualExpression: actualExpression).ToString());
+                throw new ShouldAssertException(new ExpectedActualShouldlyMessage(expectedList, actualList, customMessage, shouldlyMethod, actualExpression).ToString());
         }
     }
 
-    /// <summary>
-    /// Asserts that the enumerable contains all of the expected values as a contiguous subsequence, in order.
-    /// </summary>
-    public static void ShouldContainInConsecutiveOrder<T>(this IEnumerable<T> actual, params T[] expected) =>
-        actual.ShouldContainInConsecutiveOrder((IEnumerable<T>)expected, null);
-
-    /// <summary>
-    /// Asserts that the enumerable contains all of the expected values as a contiguous subsequence, in order.
-    /// </summary>
-    public static void ShouldContainInConsecutiveOrder<T>(this IEnumerable<T> actual, IEnumerable<T> expected, string? customMessage = null,
-        [CallerArgumentExpression(nameof(actual))] string? actualExpression = null)
+    private static void ContainsInConsecutiveOrder<T>(IEnumerable<T> actual, IEnumerable<T> expected, IEqualityComparer<T> comparer,
+        string? customMessage, string? actualExpression, [CallerMemberName] string shouldlyMethod = null!)
     {
         var actualList = actual.ToList();
         var expectedList = expected.ToList();
         if (expectedList.Count == 0)
             return;
 
-        var comparer = EqualityComparer<T>.Default;
         for (var start = 0; start + expectedList.Count <= actualList.Count; start++)
         {
             var match = true;
@@ -82,6 +110,6 @@ public static partial class ShouldContainInOrderExtensions
                 return;
         }
 
-        throw new ShouldAssertException(new ExpectedActualShouldlyMessage(expectedList, actualList, customMessage, actualExpression: actualExpression).ToString());
+        throw new ShouldAssertException(new ExpectedActualShouldlyMessage(expectedList, actualList, customMessage, shouldlyMethod, actualExpression).ToString());
     }
 }
