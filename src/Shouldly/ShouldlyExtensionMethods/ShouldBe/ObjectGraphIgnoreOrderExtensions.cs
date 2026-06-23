@@ -6,11 +6,9 @@ namespace Shouldly;
 /// Order-independent variant of <see cref="ObjectGraphTestExtensions.ShouldBeEquivalentTo(object, object, string, string)"/>.
 /// Shouldly's default ShouldBeEquivalentTo compares enumerables strictly by index; FluentAssertions'
 /// BeEquivalentTo is order-INDEPENDENT for collections by default. This overload restores that behaviour:
-/// when <paramref name="ignoreOrder"/> is true the top-level collections are matched as multisets, each
-/// actual element paired with a distinct structurally-equivalent expected element.
+/// when ignoreOrder is true the top-level collections are matched as multisets, each actual element
+/// paired with a distinct structurally-equivalent expected element.
 /// </summary>
-[ShouldlyMethods]
-[EditorBrowsable(EditorBrowsableState.Never)]
 public static partial class ObjectGraphTestExtensions
 {
     /// <summary>
