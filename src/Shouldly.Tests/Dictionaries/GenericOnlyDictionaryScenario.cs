@@ -2,10 +2,8 @@ using System.Collections;
 
 namespace Shouldly.Tests.Dictionaries;
 
-// Reproduces #601: building the failure message cast the actual to the non-generic
-// System.Collections.IDictionary, which threw InvalidCastException for dictionaries that
-// implement only IDictionary<TKey,TValue> (e.g. IHeaderDictionary, System.Text.Json's
-// JsonObject, or a mocking-framework proxy).
+// Reproduces #601: the failure message cast the actual to non-generic IDictionary, throwing
+// InvalidCastException for dictionaries that implement only IDictionary<TKey,TValue>.
 public class GenericOnlyDictionaryScenario
 {
     private static GenericOnlyDictionary<string, string> StringDictionary() =>
@@ -40,11 +38,7 @@ public class GenericOnlyDictionaryScenario
     }
 }
 
-/// <summary>
-/// A dictionary that implements <see cref="IDictionary{TKey,TValue}"/> (and therefore
-/// <see cref="IEnumerable{T}"/> of key/value pairs) but deliberately NOT the non-generic
-/// <see cref="IDictionary"/>, mirroring types such as IHeaderDictionary or JsonObject.
-/// </summary>
+// Implements only IDictionary<TKey,TValue>, deliberately not the non-generic IDictionary.
 public sealed class GenericOnlyDictionary<TKey, TValue>(IDictionary<TKey, TValue> items)
     : IDictionary<TKey, TValue>
     where TKey : notnull
@@ -70,10 +64,8 @@ public sealed class GenericOnlyDictionary<TKey, TValue>(IDictionary<TKey, TValue
 }
 
 #if NET9_0_OR_GREATER
-// The IReadOnlyDictionary<,> overloads (net9+) are the worst case for #601: a read-only
-// dictionary never implements the non-generic IDictionary, so message generation used to
-// throw for every such type (the existing tests only passed because they used a backing
-// Dictionary<,>, which does implement IDictionary).
+// A read-only dictionary can never implement the non-generic IDictionary, so #601 used to
+// throw for every IReadOnlyDictionary<,> (net9+ overloads).
 public class ReadOnlyOnlyDictionaryScenario
 {
     private static ReadOnlyOnlyDictionary<string, string> StringDictionary() =>
@@ -101,10 +93,7 @@ public class ReadOnlyOnlyDictionaryScenario
     }
 }
 
-/// <summary>
-/// A dictionary that implements only <see cref="IReadOnlyDictionary{TKey,TValue}"/>, never the
-/// non-generic <see cref="IDictionary"/> (which read-only dictionaries cannot).
-/// </summary>
+// Implements only IReadOnlyDictionary<TKey,TValue>, never the non-generic IDictionary.
 public sealed class ReadOnlyOnlyDictionary<TKey, TValue>(IReadOnlyDictionary<TKey, TValue> items)
     : IReadOnlyDictionary<TKey, TValue>
     where TKey : notnull

@@ -6,14 +6,11 @@ abstract class ShouldlyMessageGenerator
     public abstract string GenerateErrorMessage(IShouldlyAssertionContext context);
 
     /// <summary>
-    /// Looks up <paramref name="key"/> in a dictionary actual without requiring it to implement
-    /// the non-generic <see cref="IDictionary"/>. Types such as IHeaderDictionary,
-    /// IReadOnlyDictionary&lt;,&gt; implementations, System.Text.Json's JsonObject and
-    /// mocking-framework proxies implement only the generic dictionary interface (and therefore
-    /// IEnumerable&lt;KeyValuePair&lt;,&gt;&gt;); casting them to IDictionary threw
-    /// InvalidCastException while building the failure message (#601). The IDictionary fast path
-    /// preserves the exact behaviour (including the dictionary's own key comparer) for the common
-    /// case; only types that lack it fall back to a linear scan.
+    /// Looks up <paramref name="key"/> without requiring the actual to implement the non-generic
+    /// <see cref="IDictionary"/>. Generic-only dictionaries (e.g. IReadOnlyDictionary&lt;,&gt;
+    /// implementations or JsonObject) used to throw InvalidCastException here (#601). The
+    /// <see cref="IDictionary"/> fast path keeps the original behaviour, including the dictionary's
+    /// own key comparer; other types fall back to a linear scan over key/value pairs.
     /// </summary>
     [UnconditionalSuppressMessage("Trimming", "IL2075",
         Justification = "KeyValuePair<TKey, TValue> is a BCL type whose Key and Value properties define its public contract and are preserved by the trimmer.")]
