@@ -1,4 +1,4 @@
-namespace Shouldly.Tests.ShouldBe.ShouldBeEquivalentTo;
+namespace Shouldly.Tests.ShouldBeEquivalentTo;
 
 public class IgnoreOrderScenario
 {

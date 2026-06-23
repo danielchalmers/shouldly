@@ -1,11 +1,10 @@
 namespace Shouldly;
 
 /// <summary>
-/// Order-independent variant of ShouldBeEquivalentTo. Shouldly's default compares enumerables strictly by
-/// index; FluentAssertions' BeEquivalentTo is order-INDEPENDENT for collections by default. With
-/// <see cref="EquivalencyOptions.IgnoreOrder"/> the top-level collections are matched as multisets: each
-/// actual element is paired with a distinct structurally-equivalent expected element (a maximum bipartite
-/// matching, so duplicates and ambiguous equivalences are handled correctly).
+/// Order-independent variant of <c>ShouldBeEquivalentTo</c>. With <see cref="EquivalencyOptions.IgnoreOrder"/>
+/// the top-level collections are matched as multisets: each actual element is paired with a distinct
+/// structurally-equivalent expected element via maximum bipartite matching, so duplicates and ambiguous
+/// equivalences are handled correctly.
 /// </summary>
 public static partial class ObjectGraphTestExtensions
 {
