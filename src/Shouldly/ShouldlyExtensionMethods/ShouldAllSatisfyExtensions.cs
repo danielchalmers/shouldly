@@ -5,10 +5,9 @@ using NotNullAttribute = System.Diagnostics.CodeAnalysis.NotNullAttribute;
 namespace Shouldly;
 
 /// <summary>
-/// Asserts that every element of an enumerable satisfies an assertion action. Unlike
-/// <see cref="ShouldBeEnumerableTestExtensions.ShouldAllBe{T}"/> (which takes a boolean predicate),
-/// this runs arbitrary Shouldly assertions per element and aggregates every failure into one report.
-/// Mirrors FluentAssertions' AllSatisfy.
+/// Runs an assertion action against every element of an enumerable, aggregating all failures into one report.
+/// Unlike <see cref="ShouldBeEnumerableTestExtensions.ShouldAllBe{T}"/>, which takes a boolean predicate,
+/// this accepts arbitrary Shouldly assertions per element.
 /// </summary>
 [ShouldlyMethods]
 [EditorBrowsable(EditorBrowsableState.Never)]
