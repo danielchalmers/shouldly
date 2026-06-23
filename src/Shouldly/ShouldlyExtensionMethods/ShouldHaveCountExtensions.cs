@@ -4,8 +4,7 @@ using NotNullAttribute = System.Diagnostics.CodeAnalysis.NotNullAttribute;
 namespace Shouldly;
 
 /// <summary>
-/// Ergonomic count assertions for enumerables. Equivalent to <c>actual.Count().ShouldBe(n)</c> but
-/// reads better, does not require System.Linq at the call site, and produces a count-aware message.
+/// Count assertions for enumerables, equivalent to <c>actual.Count().ShouldBe(n)</c> with a count-aware message.
 /// </summary>
 [DebuggerStepThrough]
 [ShouldlyMethods]
