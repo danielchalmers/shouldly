@@ -41,7 +41,7 @@ public static partial class ShouldAllSatisfyExtensions
 
         if (failures.Count > 0)
         {
-            var detail = $"all elements to satisfy the assertion, but {failures.Count} did not:{Environment.NewLine}{string.Join(Environment.NewLine, failures)}";
+            var detail = $"every element to satisfy the assertion, but {failures.Count} did not:{Environment.NewLine}{string.Join(Environment.NewLine, failures)}";
             throw new ShouldAssertException(new ExpectedActualShouldlyMessage(detail, actual, customMessage, actualExpression: actualExpression).ToString());
         }
     }

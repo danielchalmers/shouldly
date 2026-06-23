@@ -201,6 +201,11 @@ namespace Shouldly
         public static System.Threading.Tasks.Task<TException> ThrowAsync<TException>(System.Threading.Tasks.Task task, string? customMessage = null, [System.Runtime.CompilerServices.CallerArgumentExpression("task")] string? actualExpression = null)
             where TException : System.Exception { }
     }
+    [Shouldly.ShouldlyMethods]
+    public static class ShouldAllSatisfyExtensions
+    {
+        public static void ShouldAllSatisfy<T>([System.Diagnostics.CodeAnalysis.NotNull] this System.Collections.Generic.IEnumerable<T>? actual, System.Action<T> elementAssertion, string? customMessage = null, [System.Runtime.CompilerServices.CallerArgumentExpression("actual")] string? actualExpression = null) { }
+    }
     [System.Serializable]
     public class ShouldAssertException : System.Exception
     {
