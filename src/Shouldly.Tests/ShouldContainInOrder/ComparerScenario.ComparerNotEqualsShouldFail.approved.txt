@@ -1,0 +1,8 @@
+new[] { "A", "B", "C" }
+    should contain in order
+["c", "a"]
+    but was actually
+["A", "B", "C"]
+
+Additional Info:
+    Some additional context
