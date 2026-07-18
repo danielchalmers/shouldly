@@ -1,0 +1,7 @@
+```
+arrivals
+    should contain in order
+[Homer, Moe]
+    but was actually
+[Moe, Homer, Barney]
+```

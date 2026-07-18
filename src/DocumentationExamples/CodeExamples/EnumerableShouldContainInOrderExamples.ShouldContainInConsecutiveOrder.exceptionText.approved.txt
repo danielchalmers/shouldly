@@ -1,0 +1,7 @@
+```
+lineup
+    should contain in consecutive order
+[Marge, Lisa]
+    but was actually
+[Homer, Marge, Bart, Lisa]
+```
