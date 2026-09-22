@@ -3,11 +3,7 @@ using System.ComponentModel;
 namespace Shouldly;
 
 /// <summary>
-/// Extension methods asserting that an enumerable contains a sequence of values in a given order.
-/// <see cref="ShouldContainInOrder{T}(IEnumerable{T}, IEnumerable{T}, string?, string?)"/> requires the expected
-/// values to appear in the same relative order (gaps allowed);
-/// <see cref="ShouldContainInConsecutiveOrder{T}(IEnumerable{T}, IEnumerable{T}, string?, string?)"/> requires them
-/// to appear as a contiguous run.
+/// Extension methods asserting that an enumerable contains a sequence of values in a given order. <see cref="ShouldContainInOrder{T}(IEnumerable{T}, IEnumerable{T}, string?, string?)"/> requires the expected values to appear in the same relative order (gaps allowed); <see cref="ShouldContainInConsecutiveOrder{T}(IEnumerable{T}, IEnumerable{T}, string?, string?)"/> requires them to appear as a contiguous run.
 /// </summary>
 [DebuggerStepThrough]
 [ShouldlyMethods]
@@ -15,8 +11,7 @@ namespace Shouldly;
 public static partial class ShouldContainInOrderExtensions
 {
     /// <summary>
-    /// Asserts that the enumerable contains all of the expected values in the given relative order.
-    /// The matched values need not be adjacent, but each must appear after the previous one.
+    /// Asserts that the enumerable contains all of the expected values in the given relative order. The matched values need not be adjacent, but each must appear after the previous one.
     /// </summary>
     public static void ShouldContainInOrder<T>([NotNull] this IEnumerable<T>? actual, IEnumerable<T> expected, string? customMessage = null,
         [CallerArgumentExpression(nameof(actual))] string? actualExpression = null) =>
@@ -109,8 +104,7 @@ public static partial class ShouldContainInOrderExtensions
         throw new ShouldAssertException(new ExpectedActualShouldlyMessage(mismatch, expectedItems, actualItems, customMessage, shouldlyMethod, actualExpression).ToString());
     }
 
-    // Lists and arrays are indexed in place, and the failure message shows them as passed. Anything else is enumerated
-    // exactly once into an array, which the message then shows, so a lazy or single-pass source is never enumerated again.
+    // Lists and arrays are indexed in place, and the failure message shows them as passed. Anything else is enumerated exactly once into an array, which the message then shows, so a lazy or single-pass source is never enumerated again.
     private static IReadOnlyList<T> Materialize<T>(IEnumerable<T> source) =>
         source as IReadOnlyList<T> ?? source.ToArray();
 

@@ -13,8 +13,7 @@ internal sealed class ContainInOrderMismatch
     }
 
     /// <summary>
-    /// The index into the expected values of the first one that could not be matched. For a consecutive-order check
-    /// this is also the length of the longest partial run.
+    /// The index into the expected values of the first one that could not be matched. For a consecutive-order check this is also the length of the longest partial run.
     /// </summary>
     public int ExpectedIndex { get; }
 
@@ -22,8 +21,7 @@ internal sealed class ContainInOrderMismatch
     public object? ExpectedItem { get; }
 
     /// <summary>
-    /// An index into the actual values: for an in-order check, where the previous expected value was matched;
-    /// for a consecutive-order check, where the longest partial run starts. -1 when nothing was matched.
+    /// An index into the actual values: for an in-order check, where the previous expected value was matched; for a consecutive-order check, where the longest partial run starts. -1 when nothing was matched.
     /// </summary>
     public int ActualIndex { get; }
 }
