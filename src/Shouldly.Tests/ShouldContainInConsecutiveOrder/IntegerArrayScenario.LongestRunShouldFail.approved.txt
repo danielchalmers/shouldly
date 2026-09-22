@@ -1,0 +1,9 @@
+new[] { 1, 2, 5, 1, 2, 3, 5 }
+    should contain in consecutive order
+[1, 2, 3, 4]
+    but was actually
+[1, 2, 5, 1, 2, 3, 5]
+    and the longest consecutive match was
+[1, 2, 3]
+    at index 3, which was not followed by
+4

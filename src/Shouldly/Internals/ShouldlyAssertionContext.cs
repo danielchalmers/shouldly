@@ -85,6 +85,12 @@ public class ShouldlyAssertionContext : IShouldlyAssertionContext
     internal IReadOnlyList<Equivalency.EquivalencyDifference>? EquivalencyDifferences { get; set; }
 
     /// <summary>
+    /// Where the order broke, when this context belongs to a ShouldContainInOrder or
+    /// ShouldContainInConsecutiveOrder failure.
+    /// </summary>
+    internal ContainInOrderMismatch? ContainInOrderMismatch { get; set; }
+
+    /// <summary>
     /// Initializes a new instance of the ShouldlyAssertionContext class
     /// </summary>
     /// <param name="shouldlyMethod">The name of the should method being called</param>

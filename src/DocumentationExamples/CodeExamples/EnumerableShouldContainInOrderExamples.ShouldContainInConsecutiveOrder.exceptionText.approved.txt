@@ -4,4 +4,8 @@ lineup
 [Marge, Lisa]
     but was actually
 [Homer, Marge, Bart, Lisa]
+    and the longest consecutive match was
+[Marge]
+    at index 1, which was not followed by
+Lisa
 ```

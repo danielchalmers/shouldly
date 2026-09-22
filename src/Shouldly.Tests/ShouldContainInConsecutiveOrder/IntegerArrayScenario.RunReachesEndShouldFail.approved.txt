@@ -1,12 +1,9 @@
-new[] { 1, 2, 4, 3 }
+new[] { 1, 2, 3 }
     should contain in consecutive order
-[2, 3]
+[2, 3, 4]
     but was actually
-[1, 2, 4, 3]
+[1, 2, 3]
     and the longest consecutive match was
-[2]
+[2, 3]
     at index 1, which was not followed by
-3
-
-Additional Info:
-    Some additional context
+4

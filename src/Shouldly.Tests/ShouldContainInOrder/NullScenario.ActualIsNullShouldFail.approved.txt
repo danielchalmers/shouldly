@@ -1,0 +1,8 @@
+nullableCollection
+    should contain in order
+[1, 2]
+    but was
+null
+
+Additional Info:
+    Some additional context

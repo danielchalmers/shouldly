@@ -16,7 +16,7 @@ public class EnumerableShouldContainInOrderExamples
                 var barney = new Person { Name = "Barney" };
                 var arrivals = new List<Person> { moe, homer, barney };
 
-                arrivals.ShouldContainInOrder(new List<Person> { homer, moe });
+                arrivals.ShouldContainInOrder([homer, moe]);
             },
             _testOutputHelper);
     }
@@ -33,7 +33,7 @@ public class EnumerableShouldContainInOrderExamples
                 var lisa = new Person { Name = "Lisa" };
                 var lineup = new List<Person> { homer, marge, bart, lisa };
 
-                lineup.ShouldContainInConsecutiveOrder(new List<Person> { marge, lisa });
+                lineup.ShouldContainInConsecutiveOrder([marge, lisa]);
             },
             _testOutputHelper);
     }

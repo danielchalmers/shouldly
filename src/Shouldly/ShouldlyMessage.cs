@@ -52,6 +52,19 @@ public class ExpectedActualShouldlyMessage : ShouldlyMessage
         };
         if (customMessage != null) ShouldlyAssertionContext.CustomMessage = customMessage;
     }
+
+    /// <summary>
+    /// Creates a new message for an in-order containment failure, recording where the order broke.
+    /// </summary>
+    internal ExpectedActualShouldlyMessage(Internals.ContainInOrderMismatch mismatch, object? expected, object? actual, string? customMessage, string shouldlyMethod, string? actualExpression)
+    {
+        ShouldlyAssertionContext = new ShouldlyAssertionContext(shouldlyMethod, expected, actual, actualExpression: actualExpression)
+        {
+            HasRelevantActual = true,
+            ContainInOrderMismatch = mismatch
+        };
+        if (customMessage != null) ShouldlyAssertionContext.CustomMessage = customMessage;
+    }
 }
 
 /// <summary>
@@ -403,6 +416,7 @@ public abstract class ShouldlyMessage
         new ShouldContainWithinRangeMessageGenerator(),
         new ShouldBeUniqueMessageGenerator(),
         new ShouldBeEnumerableCaseSensitiveMessageGenerator(),
+        new ShouldContainInOrderMessageGenerator(),
         new ShouldContainMessageGenerator(),
         new ShouldContainPredicateMessageGenerator(),
         new ShouldBeIgnoringOrderMessageGenerator(),

@@ -1,0 +1,8 @@
+numbers
+    should contain in order
+[3, 1]
+    but was actually
+[1, 2, 3]
+    and expected item at index 1
+1
+    was not found after the previous match at index 2

@@ -3,6 +3,9 @@ new[] { "A", "B", "C" }
 ["c", "a"]
     but was actually
 ["A", "B", "C"]
+    and expected item at index 1
+"a"
+    was not found after the previous match at index 2
 
 Additional Info:
     Some additional context
