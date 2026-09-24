@@ -38,6 +38,7 @@
   * [Empty](documentation/enumerable/empty.md)
   * [OneOf](documentation/enumerable/oneOf.md)
   * [Contain](documentation/enumerable/contain.md)
+  * [ContainInOrder](documentation/enumerable/containInOrder.md)
   * [Unique](documentation/enumerable/unique.md)
   * [SubsetOf](documentation/enumerable/subsetOf.md)
   * [Have](documentation/enumerable/have.md)

@@ -1,0 +1,9 @@
+new[] { 1, 2, 1 }
+    should contain in consecutive order
+[1, 1]
+    but was actually
+[1, 2, 1]
+    and the longest consecutive match was
+[1]
+    at index 0, which was not followed by
+1

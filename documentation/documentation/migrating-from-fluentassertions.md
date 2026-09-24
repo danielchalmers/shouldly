@@ -100,8 +100,9 @@ changed.
 | `c.Should().BeSubsetOf(other)` | `c.ShouldBeSubsetOf(other)` |
 | `c.Should().BeInAscendingOrder()` | `c.ShouldBeInOrder()` |
 | `c.Should().BeInDescendingOrder()` | `c.ShouldBeInOrder(SortDirection.Descending)` |
-| `c.Should().ContainInOrder(a, b)` | no equivalent; [see below](#no-drop-in-for-containinorder-or-containequivalentof) |
-| `c.Should().ContainEquivalentOf(item)` | no equivalent for collections; [see below](#no-drop-in-for-containinorder-or-containequivalentof) |
+| `c.Should().ContainInOrder(a, b)` | `c.ShouldContainInOrder([a, b])` (takes a collection, not `params`) |
+| `c.Should().ContainInConsecutiveOrder(a, b)` | `c.ShouldContainInConsecutiveOrder([a, b])` (takes a collection, not `params`) |
+| `c.Should().ContainEquivalentOf(item)` | no equivalent for collections; [see below](#no-drop-in-for-containequivalentof) |
 
 ### Dictionaries
 
@@ -290,28 +291,11 @@ foreach (var i in inputs)
     i.GetAttribute("type").ShouldBe("checkbox");
 ```
 
-### No drop-in for `ContainInOrder` or `ContainEquivalentOf`
+### No drop-in for `ContainEquivalentOf`
 
-Two collection assertions have no Shouldly counterpart:
-
-- `ContainInOrder(a, b, c)` asserts the items appear in that relative order (gaps allowed). There
-  is no built-in; a small local helper covers it:
-  ```csharp
-  static void ShouldContainInOrder<T>(IEnumerable<T> actual, params T[] expected)
-  {
-      var list = actual.ToList();
-      var idx = -1;
-      foreach (var e in expected)
-      {
-          var next = list.FindIndex(idx + 1, x => EqualityComparer<T>.Default.Equals(x, e));
-          next.ShouldBeGreaterThan(idx, $"expected '{e}' after index {idx}, in order");
-          idx = next;
-      }
-  }
-  ```
-- `ContainEquivalentOf(item)` on a collection (structural match of an element) has no equivalent.
-  Assert with `ShouldContain(x => …)` on the members you care about, or loop. On a string it just
-  means a case-insensitive substring, which is `ShouldContain(x, Case.Insensitive)`.
+`ContainEquivalentOf(item)` on a collection (structural match of an element) has no equivalent.
+Assert with `ShouldContain(x => …)` on the members you care about, or loop. On a string it just
+means a case-insensitive substring, which is `ShouldContain(x, Case.Insensitive)`.
 
 
 ## Object equivalence: `ShouldBeEquivalentTo`
@@ -467,5 +451,5 @@ expression and isn't trimming/AOT-safe. Prefer `ShouldSatisfy` or `Should.Satisf
 | `AssertionScope` | `ShouldSatisfy` or `Should.Satisfy` |
 | `.And` / `.Which` chaining | Separate statements, or use the value a `Should…` returns |
 | `SatisfyRespectively(…)` | `ShouldSatisfy` with one condition per element (indexed manually) |
-| `ContainInOrder(…)` / `ContainEquivalentOf(…)` | [see above](#no-drop-in-for-containinorder-or-containequivalentof) |
+| `ContainEquivalentOf(…)` on a collection | [see above](#no-drop-in-for-containequivalentof) |
 | `Implement<TInterface>()` | `typeof(IFoo).IsAssignableFrom(typeof(MyType)).ShouldBeTrue()` |

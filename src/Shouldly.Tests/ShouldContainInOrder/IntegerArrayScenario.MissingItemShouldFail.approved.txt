@@ -1,0 +1,11 @@
+new[] { 1, 2, 3 }
+    should contain in order
+[2, 9]
+    but was actually
+[1, 2, 3]
+    and expected item at index 1
+9
+    was not found after the previous match at index 1
+
+Additional Info:
+    Some additional context

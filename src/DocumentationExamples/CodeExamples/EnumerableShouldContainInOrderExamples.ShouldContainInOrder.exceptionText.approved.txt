@@ -1,0 +1,10 @@
+```
+arrivals
+    should contain in order
+[Homer, Moe]
+    but was actually
+[Moe, Homer, Barney]
+    and expected item at index 1
+Moe
+    was not found after the previous match at index 1
+```
